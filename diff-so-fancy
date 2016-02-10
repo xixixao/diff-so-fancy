@@ -24,7 +24,7 @@ colorize_context_line () {
 }
 
 mark_empty_lines () {
-	sed -E "s/^($color_code_regex)[\+\-]($reset_color)\s*$/$invert_color\2 \1/g"
+	sed -E "s/^($color_code_regex)[\+\-]($reset_color)\s*$/$invert_color\2 \x1B[0m\1/g"
 }
 
 strip_leading_symbols () {

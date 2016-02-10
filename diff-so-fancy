@@ -7,6 +7,7 @@ diff_highlight="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/third_party/di
 color_code_regex=$'(\x1B\\[([0-9]{1,2}(;[0-9]{1,2})?)[m|K])?'
 reset_color="\x1B\[m"
 dim_magenta="\x1B\[38;05;146m"
+invert_color="\x1B\[7m"
 
 format_diff_header () {
 	# simplify the unified patch diff header
@@ -22,9 +23,13 @@ colorize_context_line () {
 	sed -E "s/@@$reset_color $reset_color(.*$)/@@ $dim_magenta\1/g"
 }
 
+mark_empty_lines () {
+	sed -E "s/^($color_code_regex)[\+\-]($reset_color)\s*$/$invert_color\2 \1/g"
+}
+
 strip_leading_symbols () {
 	# strip the + and -
-	sed -E "s/^($color_code_regex)[\+\-]/\1 /g"
+	sed -E "s/^($color_code_regex)[\+\-]/\1/g"
 }
 
 print_horizontal_rule () {
@@ -32,4 +37,4 @@ print_horizontal_rule () {
 }
 
 # run it.
-cat $input | $diff_highlight | format_diff_header |  colorize_context_line | strip_leading_symbols
+cat $input | $diff_highlight | format_diff_header |  colorize_context_line | mark_empty_lines | strip_leading_symbols
